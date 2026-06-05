@@ -444,6 +444,37 @@ class DockerSandboxService(SandboxService):
             for mount in self.mounts
         }
 
+        # AOS dev source mode:
+        # When enabled, newly-created agent-server runtimes mount a synced
+        # source volume and prefer it on PYTHONPATH. This avoids rebuilding
+        # the agent-server image for every source change during development.
+        source_volume = os.getenv('AOS_AGENT_DEV_SOURCE_VOLUME')
+        source_path = os.getenv('AOS_AGENT_DEV_SOURCE_PATH', '/agent-source')
+
+        if source_volume:
+            volumes[source_volume] = {
+                'bind': source_path,
+                'mode': 'ro',
+            }
+
+            source_pythonpath = ':'.join(
+                [
+                    f'{source_path}/openhands-agent-server',
+                    f'{source_path}/openhands-sdk',
+                    f'{source_path}/openhands-tools',
+                    f'{source_path}/openhands-workspace',
+                ]
+            )
+
+            existing_pythonpath = env_vars.get('PYTHONPATH')
+            env_vars['PYTHONPATH'] = (
+                f'{source_pythonpath}:{existing_pythonpath}'
+                if existing_pythonpath
+                else source_pythonpath
+            )
+            env_vars['AOS_AGENT_DEV_SOURCE_MODE'] = '1'
+            env_vars['AOS_AGENT_DEV_SOURCE_PATH'] = source_path
+
         # Determine network mode
         network_mode = 'host' if self.use_host_network else None
 

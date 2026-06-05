@@ -37,21 +37,23 @@ services:
     build:
       context: ./vendor/software-agent-sdk
       dockerfile: ./openhands-agent-server/openhands/agent_server/docker/Dockerfile
-      target: binary
-    image: aos-agent-server:dev
+      target: ${AOS_AGENT_TARGET:-binary}
+    image: ${AOS_AGENT_IMAGE:-aos-agent-server}:${AOS_AGENT_TAG:-dev}
   openhands:
     build:
       context: ./
       dockerfile: ./containers/app/Dockerfile
-    image: aos-openhands:dev
+    image: ${AOS_APP_IMAGE:-aos-openhands}:${AOS_APP_TAG:-dev}
     container_name: aos-openhands-app
     restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
     environment:
-      AGENT_SERVER_IMAGE_REPOSITORY: aos-agent-server
-      AGENT_SERVER_IMAGE_TAG: dev
+      AGENT_SERVER_IMAGE_REPOSITORY: ${AOS_AGENT_IMAGE:-aos-agent-server}
+      AGENT_SERVER_IMAGE_TAG: ${AOS_AGENT_TAG:-dev}
+      AOS_AGENT_DEV_SOURCE_VOLUME: ${AOS_AGENT_DEV_SOURCE_VOLUME:-}
+      AOS_AGENT_DEV_SOURCE_PATH: ${AOS_AGENT_DEV_SOURCE_PATH:-/agent-source}
 
       DB_HOST: postgres
       DB_PORT: 5432
