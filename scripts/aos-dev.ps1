@@ -42,8 +42,48 @@ function Invoke-AosSnapshot {
   docker exec aos-openhands-postgres psql -U openhands -d openhands -c "SELECT conversation_id,llm_model,sandbox_id,created_at FROM conversation_metadata ORDER BY created_at DESC LIMIT 10;" 2>$null
 
   Write-Host ""
+  Write-Host "--- Agent image ---"
+  $currentAgentImageId = (docker image inspect aos-agent-server:dev --format "{{.Id}}" 2>$null)
+  if ($LASTEXITCODE -eq 0 -and $currentAgentImageId) {
+    $shortCurrentAgentImageId = $currentAgentImageId.Replace("sha256:", "").Substring(0, 12)
+    Write-Host "aos-agent-server:dev -> $shortCurrentAgentImageId"
+  } else {
+    $shortCurrentAgentImageId = ""
+    Write-Host "aos-agent-server:dev -> NOT_FOUND"
+  }
+
+  Write-Host ""
   Write-Host "--- Agent runtimes ---"
-  docker ps -a --filter "name=oh-agent-server" --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
+  $runtimes = docker ps -a --filter "name=oh-agent-server" --format "{{.Names}}|{{.Image}}|{{.Status}}|{{.Ports}}"
+  if (-not $runtimes) {
+    Write-Host "No oh-agent-server runtimes found."
+  } else {
+    $runtimes | ForEach-Object {
+      $p = $_ -split "\|", 4
+      $name = $p[0]
+      $image = $p[1]
+      $status = $p[2]
+      $ports = $p[3]
+
+      $runtimeImageId = (docker inspect $name --format "{{.Image}}" 2>$null)
+      $runtimeShortImageId = if ($runtimeImageId) { $runtimeImageId.Replace("sha256:", "").Substring(0, 12) } else { "unknown" }
+
+      $match = if ($shortCurrentAgentImageId -and ($runtimeShortImageId -eq $shortCurrentAgentImageId)) {
+        "CURRENT_IMAGE"
+      } else {
+        "OLD_RUNTIME_IMAGE"
+      }
+
+      [PSCustomObject]@{
+        Name = $name
+        Image = $image
+        ImageId = $runtimeShortImageId
+        Match = $match
+        Status = $status
+        Ports = $ports
+      }
+    } | Format-Table -AutoSize
+  }
 
   Write-Host ""
   Write-Host "--- Main containers ---"
