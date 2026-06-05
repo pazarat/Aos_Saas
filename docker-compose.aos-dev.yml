@@ -1,3 +1,4 @@
+name: aos_saas
 services:
   postgres:
     image: postgres:16-alpine
