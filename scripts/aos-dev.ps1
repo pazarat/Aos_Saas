@@ -7,6 +7,7 @@
     "build-app",
     "up",
     "restart-app",
+    "clean-exited-runtimes",
     "prune-dangling-images"
   )]
   [string]$Action
@@ -124,6 +125,31 @@ switch ($Action) {
   "restart-app" {
     Invoke-AosSnapshot
     Invoke-AosCompose up -d --no-deps --force-recreate openhands
+    Invoke-AosSnapshot
+  }
+
+  "clean-exited-runtimes" {
+    Invoke-AosSnapshot
+
+    Write-Host ""
+    Write-Host "--- Cleaning stopped agent runtimes only ---"
+
+    $containers = @()
+    $containers += docker ps -aq --filter "name=oh-agent-server" --filter "status=exited"
+    $containers += docker ps -aq --filter "name=oh-agent-server" --filter "status=created"
+    $containers += docker ps -aq --filter "name=oh-agent-server" --filter "status=dead"
+
+    $containers = $containers | Where-Object { $_ } | Sort-Object -Unique
+
+    if (-not $containers) {
+      Write-Host "No stopped oh-agent-server runtimes to remove."
+    } else {
+      $containers | ForEach-Object {
+        Write-Host "Removing stopped runtime container: $_"
+        docker rm $_
+      }
+    }
+
     Invoke-AosSnapshot
   }
 
