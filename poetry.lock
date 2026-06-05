@@ -5566,10 +5566,8 @@ description = "OpenHands Agent Server - REST/WebSocket interface for OpenHands A
 optional = false
 python-versions = ">=3.12"
 groups = ["main"]
-files = [
-    {file = "openhands_agent_server-1.25.0-py3-none-any.whl", hash = "sha256:a480494adf194793157b513a4cf362a6ec3df663cbcbf07b8622fbc447512cef"},
-    {file = "openhands_agent_server-1.25.0.tar.gz", hash = "sha256:f34875140270ec204634931af0368576cd77c50d1480e6ecd90c59118800ed48"},
-]
+files = []
+develop = true
 
 [package.dependencies]
 aiosqlite = ">=0.19"
@@ -5582,6 +5580,10 @@ sqlalchemy = ">=2"
 uvicorn = ">=0.31.1"
 websockets = ">=12"
 wsproto = ">=1.2.0"
+
+[package.source]
+type = "directory"
+url = "vendor/software-agent-sdk/openhands-agent-server"
 
 [[package]]
 name = "openhands-sdk"
@@ -13808,4 +13810,4 @@ cffi = ["cffi (>=1.17,<2.0) ; platform_python_implementation != \"PyPy\" and pyt
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12,<3.14"
-content-hash = "4ee1918aff38de82790cea7794e0cae0394a92e7fd9ca78dac4742ed102ced61"
+content-hash = "4f2b8b4dd88976eeddb6e9fe5573650d5a719df472096fe2f58f0bdd17709fe2"

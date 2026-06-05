@@ -57,7 +57,7 @@ dependencies = [
   "memory-profiler>=0.61",
   "numpy",
   "openai==2.33.0",
-  "openhands-agent-server==1.25.0",
+  "openhands-agent-server @ file:///app/vendor/software-agent-sdk/openhands-agent-server",
   "openhands-sdk @ file:///app/vendor/software-agent-sdk/openhands-sdk",
   "openhands-tools @ file:///app/vendor/software-agent-sdk/openhands-tools",
   "opentelemetry-api>=1.33.1",
@@ -247,7 +247,7 @@ pybase62 = "^1.0.0"
 
 # V1 dependencies
 openhands-sdk = { path = "vendor/software-agent-sdk/openhands-sdk", develop = true }
-openhands-agent-server = "==1.25.0"
+openhands-agent-server = { path = "vendor/software-agent-sdk/openhands-agent-server", develop = true }
 openhands-tools = { path = "vendor/software-agent-sdk/openhands-tools", develop = true }
 joserfc = ">=1.0.0"
 sqlalchemy = { extras = [ "asyncio" ], version = "^2.0.40" }
