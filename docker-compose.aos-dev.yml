@@ -31,7 +31,13 @@ services:
       - aos_pgadmin_data:/var/lib/pgadmin
     depends_on:
       - postgres
-
+  agent-server-image:
+    profiles: ["build"]
+    build:
+      context: ./vendor/software-agent-sdk
+      dockerfile: ./openhands-agent-server/openhands/agent_server/docker/Dockerfile
+      target: binary
+    image: aos-agent-server:dev
   openhands:
     build:
       context: ./
@@ -43,8 +49,8 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      AGENT_SERVER_IMAGE_REPOSITORY: ghcr.io/openhands/agent-server
-      AGENT_SERVER_IMAGE_TAG: 1.25.0-python
+      AGENT_SERVER_IMAGE_REPOSITORY: aos-agent-server
+      AGENT_SERVER_IMAGE_TAG: dev
 
       DB_HOST: postgres
       DB_PORT: 5432
