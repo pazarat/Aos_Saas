@@ -39,7 +39,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v6
+              uses: actions/checkout@v6.0.2
 
             - name: Clone repository
               env:
@@ -73,7 +73,7 @@ jobs:
             classification: ${{ steps.parsed_result.outputs.classification }}
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v6
+              uses: actions/checkout@v6.0.2
 
             - name: Set up Python
               uses: actions/setup-python@v6
@@ -453,7 +453,7 @@ jobs:
             cancel-in-progress: false
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v6
+              uses: actions/checkout@v6.0.2
 
             - name: Set up Python
               uses: actions/setup-python@v6
@@ -676,7 +676,7 @@ jobs:
             cancel-in-progress: false
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v6
+              uses: actions/checkout@v6.0.2
 
             - name: Set up Python
               uses: actions/setup-python@v6
