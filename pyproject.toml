@@ -59,7 +59,7 @@ dependencies = [
   "openai==2.33.0",
   "openhands-agent-server==1.25.0",
   "openhands-sdk @ file:///app/vendor/software-agent-sdk/openhands-sdk",
-  "openhands-tools==1.25.0",
+  "openhands-tools @ file:///app/vendor/software-agent-sdk/openhands-tools",
   "opentelemetry-api>=1.33.1",
   "opentelemetry-exporter-otlp-proto-grpc>=1.33.1",
   "orjson>=3.11.6",
@@ -248,7 +248,7 @@ pybase62 = "^1.0.0"
 # V1 dependencies
 openhands-sdk = { path = "vendor/software-agent-sdk/openhands-sdk", develop = true }
 openhands-agent-server = "==1.25.0"
-openhands-tools = "==1.25.0"
+openhands-tools = { path = "vendor/software-agent-sdk/openhands-tools", develop = true }
 joserfc = ">=1.0.0"
 sqlalchemy = { extras = [ "asyncio" ], version = "^2.0.40" }
 pg8000 = "^1.31.5"
