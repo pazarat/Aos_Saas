@@ -1256,11 +1256,20 @@ class WebhookSubscriber(Subscriber):
         if self.session_api_key:
             headers["X-Session-API-Key"] = self.session_api_key
 
-        # Convert events to serializable format
-        event_data = [
-            event.model_dump() if hasattr(event, "model_dump") else event.__dict__
-            for event in events_to_post
-        ]
+        # Convert events to JSON-serializable format.
+        # Pydantic's default model_dump() uses Python mode and can leave values
+        # such as SecretStr in the payload, which httpx/json cannot serialize.
+        event_data = []
+        for event in events_to_post:
+            if hasattr(event, "model_dump"):
+                try:
+                    event_data.append(event.model_dump(mode="json"))
+                except TypeError:
+                    event_data.append(event.model_dump())
+            elif hasattr(event, "__dict__"):
+                event_data.append(event.__dict__)
+            else:
+                event_data.append(event)
 
         # Construct events URL
         events_url = (
